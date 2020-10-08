@@ -113,3 +113,48 @@ for (k in servers + 1:packets) {
 }
 L # prosecen broj na klienti vo sistemot L
 Lq  #prosecen broj na klienti vo redicata
+
+#Proverka so gotova biblioteka
+library(queueing)
+input <- NewInput.MMCK(lambda = lambda,
+                       mu = mi,
+                       c = servers,
+                       k = packets)
+output <- QueueingModel(input)
+Report(output)
+summary(output)
+#Vizuelizacija na brojot na paketi vo sistemot, intervalno vreme, servis vreme
+curve(
+  dpois(x, input$lambda),
+  from = 0,
+  to = packets,
+  type = "b",
+  lwd = 3,
+  xlab = "Number of packets",
+  ylab = "Probability",
+  main = "Poisson Distribution for Arrival Process",
+  ylim = c(0, 1),
+  n = 21
+)
+curve(
+  dexp(x, rate = 1 / input$lambda),
+  from = 0,
+  to = max(interval_time),
+  type = "l",
+  lwd = 3,
+  xlab = "Interarrival Time",
+  ylab = "Probaility",
+  main = "Exponential Distribution for Interarrival Time",
+  ylim = c(0, 1)
+)
+curve(
+  dexp(x, rate = input$mu),
+  from = 0,
+  to = max(service_time),
+  type = "l",
+  lwd = 3,
+  xlab = "Service Waiting Time",
+  ylab = "Probaility",
+  main = "Exponential Distribution for Service Process",
+  ylim = c(0, 1)
+)
